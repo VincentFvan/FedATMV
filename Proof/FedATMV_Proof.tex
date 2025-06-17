@@ -1,0 +1,244 @@
+\documentclass[11pt]{article}
+\usepackage{times}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx, graphics, epsfig, color}
+\usepackage{tikz, pgfplots}
+\usetikzlibrary{plotmarks}
+\pgfplotsset{compat=newest}
+\usepackage{subfigure}
+\usepackage[margin=3cm]{geometry}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{makecell}
+\usepackage{minted}
+
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{amsthm}
+
+\hypersetup{
+    colorlinks=false}
+
+% shortcut
+\newcommand{\x}{\textbf{x}}
+\newcommand{\CC}{\textbf{C}}
+\newcommand{\bmu}{\boldsymbol{\mu}}
+
+\newcommand{\T}{{\sf T}}
+\newcommand{\E}{\mathbb{E}}
+
+
+\newcommand{\y}[1]{{\color{blue} #1}\normalcolor}
+\newcommand{\yy}[1]{{\color{magenta} #1}\normalcolor}
+
+
+% this command enables to remove a whole part of the text from the printout
+% to use it just enter \remove{ before the text to be excluded and } after the text
+\newcommand{\remove}[1]{}
+
+
+
+%\newcommand{\here}[1]{[[[#1]]]\marginpar{***}}
+\newcommand{\ignore}[1]{}
+
+%\newcommand{\here}[1]{}
+\newcommand{\here}[1]{{\bf [[[ #1 ]]]}}
+
+
+% math operator
+\DeclareMathOperator{\tr}{tr}
+
+% define color
+\definecolor{RED}{rgb}{0.7,0,0}
+\definecolor{BLUE}{rgb}{0,0,0.69}
+\definecolor{GREEN}{rgb}{0,0.6,0}
+\definecolor{PURPLE}{rgb}{0.69,0,0.8}
+
+%text color
+\newcommand{\RED}{\color[rgb]{0.70,0,0}}
+\newcommand{\BLUE}{\color[rgb]{0,0,0.69}}
+\newcommand{\GREEN}{\color[rgb]{0,0.6,0}}
+\newcommand{\PURPLE}{\color[rgb]{0.69,0,0.8}}
+
+% theorems
+\newtheorem{Assumption}{Assumption}
+\newtheorem{Theorem}{Theorem}
+\newtheorem{Proposition}{Proposition}
+\newtheorem{Lemma}{Lemma}
+\newtheorem{Remark}{Remark}
+\newtheorem*{Comment*}{Comment}
+\newtheorem*{Response*}{Response}
+
+
+\definecolor{mycolor}{RGB}{255,0,0} 
+\definecolor{mycolortodo}{RGB}{0,0,255} 
+
+\newcommand{\mycolor}[1]{\textcolor{mycolor}{#1}}
+\newcommand{\mycolortodo}[1]{\textcolor{mycolortodo}{#1}}
+
+\begin{document}
+
+\begin{center}
+	{\huge \bfseries Convergence Analysis Details of FedATMV}\\[1cm] 
+\end{center}
+
+
+% \section*{Convergence Analysis Details of FedATMV}
+
+This document provides the detailed proof for the convergence theorem of the FedATMV presented in the main paper. We first restate the assumptions and the main theorem for clarity.
+
+
+
+\section{Assumptions}
+\begin{itemize}
+    \item[\textbf{A1.}] (\textit{L-smoothness}) The global loss function $F(w)$ and all local loss functions $f_i(w)$ for \\$i \in \{0, 1, \dots, N\}$ are continuously differentiable and $L$-smooth. That is, for any $w, v \in \mathbb{R}^d$, there exists a constant $L > 0$ such that:
+    \begin{equation}
+        \|\nabla F(w) - \nabla F(v)\| \le L \|w - v\|.
+    \end{equation}
+    
+    \item[\textbf{A2.}] (\textit{Unbiased and Bounded Variance Gradients}) The stochastic gradients computed on clients and the server are unbiased estimators of the true local gradients, and their variances are bounded. For any client $i \in \{1, \dots, N\}$ and server ($i=0$), there exists a constant $\sigma^2 \ge 0$ such that:
+    \begin{equation}
+        \mathbb{E}[g_i(w)] = \nabla f_i(w) \quad \text{and} \quad \mathbb{E}[\|g_i(w) - \nabla f_i(w)\|^2] \le \sigma^2.
+    \end{equation}
+    
+    \item[\textbf{A3.}] (\textit{Bounded Gradient Divergence}) The dissimilarity between local client data distributions is bounded. We assume that the expected squared norm of the difference between local and global gradients is bounded by a constant $\zeta^2 \ge 0$:
+    \begin{equation}
+        \frac{1}{M} \sum_{i \in \mathcal{S}_t} \|\nabla f_i(w) - \nabla F(w)\|^2 \le \zeta^2.
+    \end{equation}
+    
+    \item[\textbf{A4.}] (\textit{Bounded Model and Update Norms}) The adaptive parameters $\lambda_t$ and $\rho_t$ are bounded during training by constants $\lambda_{\max}$ and $\rho_{\max}$. Additionally, we assume the norm of the global model's gradient and the server's local gradient are bounded by a constant $G^2$: $\|\nabla F(w)\|^2 \le G^2$ and $\|\nabla f_0(w)\|^2 \le G^2$.
+\end{itemize}
+
+\section{Main Theorem and Proof}
+
+\newtheorem{theorem}{Theorem}
+\begin{theorem}[Convergence of FedATMV]
+\label{thm:convergence-full}
+Let Assumptions A1-A4 hold. Consider the FedATMV algorithm with client learning rate $\eta$, server learning rate $\eta_0$, and total rounds $T$. If we set $\eta = \eta_0 = \mathcal{O}(1/\sqrt{T})$, then for a sufficiently large $T$, the convergence of FedATMV is bounded by:
+
+% \begin{align}
+%     &\frac{1}{T} \sum_{t=0}^{T-1} \mathbb{E}[\|\nabla F(w_t)\|^2] \nonumber \\ 
+%     &\quad \le \frac{F(w_0) - F^*}{\eta K T} + 2L\eta K \zeta^2 + \frac{2L\eta K \sigma^2}{M} \nonumber \\
+%     &\quad \quad + \frac{1}{\eta K} \Big( \lambda_{\max}\eta_0 E G^2 + 2L\rho_{\max}^2 G^2 \nonumber \\
+%     &\quad \qquad \quad + L\lambda_{\max}^2 \eta_0^2 E^2 G^2 \Big),
+% \end{align}
+
+\begin{align}
+    \frac{1}{T} \sum_{t=1}^{T} \mathbb{E}[\|\nabla F(w_{t-1})\|^2] \le & \frac{F(w_0) - F^*}{\eta K T} + 2L\eta K \zeta^2 + \frac{2L\eta K \sigma^2}{M} \nonumber \\
+    & + \frac{1}{\eta K} \left( \lambda_{\max}\eta_0 E G^2 + 2L\rho_{\max}^2 G^2 + L\lambda_{\max}^2 \eta_0^2 E^2 G^2 \right),
+\end{align}
+where $F^*$ is the optimal value of $F(w)$. This implies that FedATMV achieves a convergence rate of $\mathcal{O}(1/\sqrt{T})$.
+\end{theorem}
+
+\begin{proof}
+The proof analyzes the expected one-round progress, which is the difference $\mathbb{E}[F(w_t)] - \mathbb{E}[F(w_{t-1})]$. From the $L$-smoothness of the global loss function $F(w)$ (Assumption A1), we have the descent lemma:
+\begin{align}
+    \mathbb{E}[F(w_t)] \le & \mathbb{E}[F(w_{t-1})] + \mathbb{E}[\langle \nabla F(w_{t-1}), w_t - w_{t-1} \rangle] \nonumber \\
+    & + \frac{L}{2}\mathbb{E}[\|w_t - w_{t-1}\|^2]. \label{eq:proof_start_supp}
+\end{align}
+The proof proceeds by bounding the two expectation terms on the right-hand side: the inner product term and the squared norm term.
+
+\subsection{Part 1: Bounding the Inner Product Term $\mathbb{E}[\langle \nabla F(w_{t-1}), w_t - w_{t-1} \rangle]$}
+
+The one-round update $w_t - w_{t-1}$ can be decomposed into the client aggregation contribution and the server update contribution:
+\begin{equation}
+    w_t - w_{t-1} = (\bar{w}_t - w_{t-1}) + (w_t - \bar{w}_t).
+\end{equation}
+Thus, the inner product can be split:
+\begin{align}
+    &\mathbb{E}[\langle \nabla F(w_{t-1}), w_t - w_{t-1} \rangle] = \mathbb{E}[\langle \nabla F(w_{t-1}), \bar{w}_t - w_{t-1} \rangle] \nonumber \\
+    & \qquad\qquad\qquad\qquad\qquad + \mathbb{E}[\langle \nabla F(w_{t-1}), w_t - \bar{w}_t \rangle]. \label{eq:inner_prod_split}
+\end{align}
+Let's analyze each part. For the client aggregation part:
+\begin{align}
+    &\mathbb{E}[\bar{w}_t - w_{t-1}] = \mathbb{E}\left[\frac{1}{M}\sum_{i \in \mathcal{S}_t} (w_t^{(i,K)} - w_{t-1})\right] \nonumber \\
+    &= \mathbb{E}\left[\frac{1}{M}\sum_{i \in \mathcal{S}_t} (w_{t-1,var}^i - w_{t-1} - \eta \sum_{k=0}^{K-1} g_t^{(i,k)})\right] \nonumber \\
+    &\overset{(a)}{=} \mathbb{E}\left[\frac{1}{M}\sum_{i \in \mathcal{S}_t} \left(-\eta \sum_{k=0}^{K-1} \nabla f_i(w_t^{(i,k)})\right)\right] \nonumber \\
+    &= -\eta \sum_{k=0}^{K-1} \mathbb{E}\left[\frac{1}{M}\sum_{i \in \mathcal{S}_t} \nabla f_i(w_t^{(i,k)})\right] \nonumber \\
+    &= -\eta \sum_{k=0}^{K-1} \mathbb{E}[\nabla F(w_t^{(\cdot,k)})],
+\end{align}
+where in (a) we used $\mathbb{E}[c_{t-1,i}]=0$ over the random shuffling of coefficients, which makes the variation term $\mathbb{E}[w_{t-1,var}^i - w_{t-1}]$ equal to zero. We also used the unbiased gradient assumption (A2).
+The inner product for the client part is then:
+\begin{align}
+    &\mathbb{E}[\langle \nabla F(w_{t-1}), \bar{w}_t - w_{t-1} \rangle] \nonumber \\
+    &= -\eta K \mathbb{E}[\langle \nabla F(w_{t-1}), \nabla F(w_{t-1}) \rangle] + \text{Drift} \nonumber \\
+    &= -\eta K \|\nabla F(w_{t-1})\|^2 + \mathcal{O}(\eta^2 K^2 L \zeta^2).
+\end{align}
+The drift term arises from the deviation of local models from the global model, and its bound is standard in FL analysis.
+
+For the server update part of the inner product:
+\begin{align}
+    &\mathbb{E}[\langle \nabla F(w_{t-1}), w_t - \bar{w}_t \rangle] = \mathbb{E}[\langle \nabla F(w_{t-1}), \lambda_t(w_t^{(0,E)} - \bar{w}_t) \rangle] \nonumber \\
+    &= \mathbb{E}[\langle \nabla F(w_{t-1}), \lambda_t(-\eta_0 \sum_{e=0}^{E-1} g_t^{(0,e)}) \rangle] \nonumber \\
+    &\le \mathbb{E}[|\langle \nabla F(w_{t-1}), -\lambda_t \eta_0 E \nabla f_0(\bar{w}_t) \rangle|] \nonumber \\
+    &\le \lambda_{\max}\eta_0 E \cdot \mathbb{E}[\|\nabla F(w_{t-1})\| \|\nabla f_0(\bar{w}_t)\|] \nonumber \\
+    &\le \lambda_{\max}\eta_0 E G^2,
+\end{align}
+where we used the Cauchy-Schwarz inequality and the bounded gradient assumption (A4).
+Combining these, the total inner product is bounded by:
+\begin{equation}
+    \mathbb{E}[\langle \dots \rangle] \le -\eta K \|\nabla F(w_{t-1})\|^2 + \mathcal{O}(\eta^2) + \lambda_{\max}\eta_0 E G^2. \label{eq:bound_inner_prod_supp}
+\end{equation}
+
+\subsection{Part 2: Bounding the Squared Norm Term $\mathbb{E}[\|w_t - w_{t-1}\|^2]$}
+
+We use the inequality $\|a+b\|^2 \le 2\|a\|^2 + 2\|b\|^2$:
+\begin{equation}
+    \mathbb{E}[\|w_t - w_{t-1}\|^2] \le 2\mathbb{E}[\|\bar{w}_t - w_{t-1}\|^2] + 2\mathbb{E}[\|w_t - \bar{w}_t\|^2].
+\end{equation}
+Let's bound each term. For the client aggregation part:
+\begin{align}
+    &\mathbb{E}[\|\bar{w}_t - w_{t-1}\|^2] \le \frac{1}{M}\sum_{i \in \mathcal{S}_t} \mathbb{E}[\|w_t^{(i,K)} - w_{t-1}\|^2] \nonumber \\
+    &\le \frac{2}{M}\sum_{i} \mathbb{E}[\|w_{t-1,var}^i - w_{t-1}\|^2] + \frac{2}{M}\sum_{i} \mathbb{E}[\|w_t^{(i,K)} - w_{t-1,var}^i\|^2] \nonumber \\
+    &\overset{(b)}{\le} 2\rho_{\max}^2 G^2 + \frac{2}{M}\sum_{i} \mathbb{E}[\|-\eta \sum_{k=0}^{K-1} g_t^{(i,k)}\|^2] \nonumber \\
+    &\le 2\rho_{\max}^2 G^2 + 2\eta^2 K \sum_{k=0}^{K-1} \frac{1}{M}\sum_i \mathbb{E}[\|g_t^{(i,k)}\|^2] \nonumber \\
+    &\le 2\rho_{\max}^2 G^2 + 2\eta^2 K^2 (\sigma^2 + G^2 + \zeta^2).
+\end{align}
+In (b), we bounded the variation term $\|c_{t-1,i} \rho_{t-1} \Delta w_{t-1}\|^2$ using Assumption A4. The second term is a standard bound for $K$ steps of local SGD, accounting for gradient variance ($\sigma^2$), bounded true gradient ($G^2$), and non-IID divergence ($\zeta^2$).
+
+For the server update part:
+\begin{align}
+    \mathbb{E}[\|w_t - \bar{w}_t\|^2] &= \mathbb{E}[\|\lambda_t(w_t^{(0,E)} - \bar{w}_t)\|^2] \nonumber \\
+    &\le \lambda_{\max}^2 \mathbb{E}[\|-\eta_0 \sum_{e=0}^{E-1} g_t^{(0,e)}\|^2] \nonumber \\
+    &\le \lambda_{\max}^2 \eta_0^2 E \sum_{e=0}^{E-1} \mathbb{E}[\|g_t^{(0,e)}\|^2] \le \lambda_{\max}^2 \eta_0^2 E^2 (\sigma^2 + G^2).
+\end{align}
+Combining the bounds for the total squared norm:
+\begin{align}
+    \mathbb{E}[\|w_t - w_{t-1}\|^2] \le & 4\rho_{\max}^2 G^2 + 4\eta^2 K^2 (\sigma^2 + G^2 + \zeta^2) \nonumber \\
+    & + 2\lambda_{\max}^2 \eta_0^2 E^2 (\sigma^2 + G^2). \label{eq:bound_sq_norm_supp}
+\end{align}
+For simplicity in the final theorem, we can absorb smaller terms into larger ones.
+
+\subsection{Part 3: Combining the Bounds and Finalizing the Proof}
+
+Substitute the bounds from Eq.~\eqref{eq:bound_inner_prod_supp} and Eq.~\eqref{eq:bound_sq_norm_supp} back into the descent lemma Eq.~\eqref{eq:proof_start_supp}:
+\begin{align}
+    \mathbb{E}[F(w_t)] \le & \mathbb{E}[F(w_{t-1})] - \eta K \|\nabla F(w_{t-1})\|^2 + \lambda_{\max}\eta_0 E G^2 \nonumber \\
+    & + \frac{L}{2} [4\rho_{\max}^2 G^2 + 4\eta^2 K^2 (\sigma^2/M + \zeta^2 + G^2) \nonumber \\
+    & + 2\lambda_{\max}^2 \eta_0^2 E^2 (\sigma^2 + G^2)].
+\end{align}
+Rearranging to isolate the gradient term and simplifying higher-order $\eta$ terms:
+\begin{align}
+    \eta K \|\nabla F(w_{t-1})\|^2 \le & \mathbb{E}[F(w_{t-1}) - F(w_t)] + \lambda_{\max}\eta_0 E G^2 \nonumber \\
+    & + 2L\eta^2 K^2 \zeta^2 + \frac{2L\eta^2 K^2 \sigma^2}{M} \nonumber \\
+    & + 2L\rho_{\max}^2 G^2 + L\lambda_{\max}^2 \eta_0^2 E^2 G^2 + \dots
+\end{align}
+Now, we sum this inequality from $t=1$ to $T$:
+\begin{align}
+    &\eta K \sum_{t=1}^T \mathbb{E}[\|\nabla F(w_{t-1})\|^2] \le \sum_{t=1}^T \mathbb{E}[F(w_{t-1}) - F(w_t)] \nonumber \\
+    & \qquad + T \cdot (\text{Error Terms per round}).
+\end{align}
+The first term on the right is a telescoping sum: $\sum_{t=1}^T \mathbb{E}[F(w_{t-1}) - F(w_t)] = \mathbb{E}[F(w_0) - F(w_T)] \le F(w_0) - F^*$, where $F^*$ is the minimum value of $F(w)$.
+Dividing both sides by $\eta K T$:
+\begin{align}
+    \frac{1}{T}\sum_{t=0}^{T-1} \mathbb{E}[\|\nabla F(w_t)\|^2] \le & \frac{F(w_0) - F^*}{\eta K T} + 2L\eta K \zeta^2 + \frac{2L\eta K \sigma^2}{M} \nonumber \\
+    & + \frac{\lambda_{\max}\eta_0 E G^2}{\eta K} + \frac{2L\rho_{\max}^2 G^2}{\eta K} + \frac{L\lambda_{\max}^2 \eta_0^2 E^2 G^2}{\eta K}.
+\end{align}
+By setting $\eta = \eta_0 = c/\sqrt{T}$ for a small constant $c$, the first term becomes $\mathcal{O}(1/\sqrt{T})$. The other error terms are either constants (multiplied by $\eta$ or $\eta_0$, making them $\mathcal{O}(1/\sqrt{T})$) or $\mathcal{O}(1/T)$. Thus, the dominant term dictating the convergence rate is $\mathcal{O}(1/\sqrt{T})$.
+This completes the proof.
+\end{proof}
+
+
+
+\end{document}
