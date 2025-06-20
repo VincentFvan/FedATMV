@@ -9,7 +9,7 @@ This repository contains the official implementation and detailed mathematical p
 The repository is organized into two main directories:
 
 .
-├── Code/ # Contains all source code and instructions for running experiments.
+├── Code/ # Contains all source code and instructions for running experiments.<br>
 └── Proof/ # Contains the detailed mathematical proof for the convergence analysis mentioned in the paper (Section Ⅲ-D).
 
 ## Code Directory Structure
@@ -17,22 +17,22 @@ The repository is organized into two main directories:
 The source code within the `Code/` directory is organized as follows:
 
 Code/
-├── atmv.py # Main script to run experiments
-├── config.py # All hyperparameters and settings
-├── multi_run.py # Script to run multiple experiments and aggregate results
-├── README.md # This file
-├── requirements.txt # Python package dependencies
-├── data/
-│ └── shakespeare/ # Directory for the Shakespeare dataset
-│ ├── train/
-│ └── test/
-├── models/
-│ ├── lstm.py # LSTM model for Shakespeare
-│ └── vgg.py # VGG-16 model for CIFAR-100
-└── utils/
-├── language_utils.py # Helper functions for text data
-├── ShakeSpeare.py # Dataset loader for Shakespeare
-└── ShakeSpeare_reduce.py # Dataset loader with client data reduction
+├── atmv.py # Main script to run experiments<br>
+├── config.py # All hyperparameters and settings<br>
+├── multi_run.py # Script to run multiple experiments and aggregate results<br>
+├── README.md # This file<br>
+├── requirements.txt # Python package dependencies<br>
+├── data/<br>
+│ └── shakespeare/ # Directory for the Shakespeare dataset<br>
+│ ├── train/<br>
+│ └── test/<br>
+├── models/<br>
+│ ├── lstm.py # LSTM model for Shakespeare<br>
+│ └── vgg.py # VGG-16 model for CIFAR-100<br>
+└── utils/<br>
+├── language_utils.py # Helper functions for text data<br>
+├── ShakeSpeare.py # Dataset loader for Shakespeare<br>
+└── ShakeSpeare_reduce.py # Dataset loader with client data reduction<br>
 
 ## Setup
 
