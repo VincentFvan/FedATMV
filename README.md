@@ -8,7 +8,7 @@ This repository contains the official implementation and detailed mathematical p
 
 The repository is organized into two main directories:
 
-.
+.<br>
 ├── Code/ # Contains all source code and instructions for running experiments.<br>
 └── Proof/ # Contains the detailed mathematical proof for the convergence analysis mentioned in the paper (Section Ⅲ-D).
 
@@ -16,7 +16,7 @@ The repository is organized into two main directories:
 
 The source code within the `Code/` directory is organized as follows:
 
-Code/
+Code/<br>
 ├── atmv.py # Main script to run experiments<br>
 ├── config.py # All hyperparameters and settings<br>
 ├── multi_run.py # Script to run multiple experiments and aggregate results<br>
@@ -32,7 +32,7 @@ Code/
 └── utils/<br>
 ├── language_utils.py # Helper functions for text data<br>
 ├── ShakeSpeare.py # Dataset loader for Shakespeare<br>
-└── ShakeSpeare_reduce.py # Dataset loader with client data reduction<br>
+└── ShakeSpeare_reduce.py # Dataset loader with client data reduction
 
 ## Setup
 
