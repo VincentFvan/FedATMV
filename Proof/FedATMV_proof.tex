@@ -115,7 +115,7 @@ This document provides the detailed proof for the convergence theorem of the Fed
 \newtheorem{theorem}{Theorem}
 \begin{theorem}[Convergence of FedATMV]
 \label{thm:convergence-full}
-Let Assumptions A1-A4 hold. Consider the FedATMV algorithm with client learning rate $\eta$, server learning rate $\eta_0$, and total rounds $T$. If we set $\eta = \eta_0 = \mathcal{O}(1/\sqrt{T})$, then for a sufficiently large $T$, the convergence of FedATMV is bounded by:
+Let Assumptions A1-A4 hold. Consider the FedATMV algorithm with client learning rate $\eta$, server learning rate $\eta_0$, and total rounds $T$. If we set $\eta = \eta_0 = \mathcal{O}(1/\sqrt{T})$, then for a sufficiently large $T$, the convergence of FedATMV is bounded. The bound is influenced by our adaptive parameters $\lambda_{\max}$ and $\rho_{\max}$:
 
 % \begin{align}
 %     &\frac{1}{T} \sum_{t=0}^{T-1} \mathbb{E}[\|\nabla F(w_t)\|^2] \nonumber \\ 
@@ -195,7 +195,7 @@ Let's bound each term. For the client aggregation part:
     &\le 2\rho_{\max}^2 G^2 + 2\eta^2 K \sum_{k=0}^{K-1} \frac{1}{M}\sum_i \mathbb{E}[\|g_t^{(i,k)}\|^2] \nonumber \\
     &\le 2\rho_{\max}^2 G^2 + 2\eta^2 K^2 (\sigma^2 + G^2 + \zeta^2).
 \end{align}
-In (b), we bounded the variation term $\|c_{t-1,i} \rho_{t-1} \Delta w_{t-1}\|^2$ using Assumption A4. The second term is a standard bound for $K$ steps of local SGD, accounting for gradient variance ($\sigma^2$), bounded true gradient ($G^2$), and non-IID divergence ($\zeta^2$).
+In (b), we substituted $w_{t-1, var}^{i} = w_{t-1} + c_{t-1,i} \cdot \rho_{t-1} \cdot \Delta w_{t-1}$ (i.e., equation (18) from the original paper), and then bounded the variation term $\|c_{t-1,i} \rho_{t-1} \Delta w_{t-1}\|^2$ using Assumption A4. The second term is a standard bound for $K$ steps of local SGD, accounting for gradient variance ($\sigma^2$), bounded true gradient ($G^2$), and non-IID divergence ($\zeta^2$).
 
 For the server update part:
 \begin{align}
